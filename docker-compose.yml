@@ -1,0 +1,45 @@
+version: "3"
+
+volumes:
+  CountingStatic:
+    external: true
+  CountingDB:
+    external: true
+  cache:
+    external: true
+
+
+services:
+  bot:
+    restart: unless-stopped
+    build: ./src
+    depends_on:
+      - postgres
+      - cache
+    volumes:
+      - CountingStatic:/static
+    container_name: Bot
+
+  postgres:
+    restart: unless-stopped
+    image: postgres:12-alpine
+    environment:
+      - POSTGRES_USER=countingbot
+      - POSTGRES_PASSWORD=-YnZtyQ<|Te{0X^W
+      - POSTGRES_DB=countingdb
+    ports:
+      - 5436:5432
+    volumes:
+      - ./schema.postgresql.sql:/docker-entrypoint-initdb.d/schema.postgresql.sql:ro
+      - CountingDB:/var/lib/postgresql/data
+    container_name: DB
+
+  cache:
+    restart: unless-stopped
+    image: redis:7.0.7-alpine
+    ports:
+      - '6379:6379'
+    command: redis-server --loglevel warning
+    volumes:
+      - cache:/data
+    container_name: Cache

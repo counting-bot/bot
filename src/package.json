@@ -1,0 +1,12 @@
+{
+  "type": "module",
+  "dependencies": {
+    "expr-eval": "github:counting-bot/expr-eval#dev",
+    "gamemodeconverion": "github:counting-bot/gameModeConversions",
+    "ioredis": "^5.2.4",
+    "node-cron": "github:counting-bot/node-cron",
+    "oceanic.js": "github:counting-bot/oceanic#build",
+    "postgres": "^3.3.2",
+    "words-to-numbers": "github:counting-bot/words-to-numbers"
+  }
+}
