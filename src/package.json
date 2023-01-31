@@ -1,12 +1,12 @@
 {
   "type": "module",
   "dependencies": {
-    "expr-eval": "github:counting-bot/expr-eval#dev",
-    "gamemodeconverion": "github:counting-bot/gameModeConversions",
+    "expr-eval": "github:counting-bot/expr-eval#5a0e6e9234815005052f7cc5861a886311faf607",
+    "gamemodeconverion": "github:counting-bot/gameModeConversions#2a75be2dc17e4318a5e2be2d44f2b8bab5224736",
     "ioredis": "^5.2.4",
-    "node-cron": "github:counting-bot/node-cron",
-    "oceanic.js": "github:counting-bot/oceanic#build",
+    "node-cron": "github:counting-bot/node-cron#555380a7fb4184ceb108922bfc2dbe7dfa32ebec",
+    "oceanic.js": "github:counting-bot/oceanic#4a5df7025b40d32f287f1833775f29fe0d2ca621",
     "postgres": "^3.3.2",
-    "words-to-numbers": "github:counting-bot/words-to-numbers"
+    "words-to-numbers": "github:counting-bot/words-to-numbers#3e3dec52388c1edfa67614387834196db7a6a1d7"
   }
 }
