@@ -151,7 +151,7 @@ export default class count {
         const beatHS = this.value > this.countChannel.hs && !this.countChannel.nofail;
         const goalReached = this.countChannel.goal !== 0 && this.countChannel.goal <= this.value;
 
-        pgPool`UPDATE data SET last_num = ${this.value}, previos_sender = ${this.memberid}, name = ${this.channelName}, hs = GREATEST(${this.value}, data.hs), hs_user = ${beatHS ? this.memberid : this.countChannel.hs_user}, hs_date = ${beatHS ? pgPool`localtimestamp` : this.countChannel.hs_date}, goal_date = ${goalReached ? '' : this.countChannel.goal_date}, goal = ${goalReached ? 0 : this.countChannel.goal} WHERE channelid = ${this.channelid}`.catch(()=>{})
+        pgPool`UPDATE data SET last_num = ${this.value}, previos_sender = ${this.memberid}, name = ${this.channelName}, hs = GREATEST(${this.value}, data.hs), hs_user = ${beatHS ? this.memberid : this.countChannel.hs_user}, hs_date = ${beatHS ? pgPool`localtimestamp` : this.countChannel.hs_date}, goal_date = ${goalReached ? '0' : this.countChannel.goal_date}, goal = ${goalReached ? 0 : this.countChannel.goal} WHERE channelid = ${this.channelid}`.catch(()=>{})
         
         // add correct or hs reaction
         this.bot.channels.createReaction(this.channelid, this.messageid, beatHS ? this.countChannel.hs_react : this.countChannel.react).catch(()=>{});
