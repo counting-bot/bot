@@ -3,6 +3,10 @@
  *   All rights reserved.
  *   This repository is licensed under the [Commons Clause License](https://commonsclause.com/). Monetized use of this repository is strictly disallowed.
  */
-import Redis from "ioredis"
-
-export default new Redis(6379, "cache")
+export default class {
+    constructor(user){
+        this.username = user.username
+        this.display_name = user.display_name
+        this.avatar = user.avatar
+    }
+}

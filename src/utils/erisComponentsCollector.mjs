@@ -15,8 +15,7 @@ export default class ErisComponentsCollector extends EventEmitter {
         if (maxListeners !== 0) ErisClient.setMaxListeners(maxListeners + 1);
 
         const listenerFN = async (data) => {
-            if (!data.data.componentType) return;
-            if (data.channelID != channel) return;
+            if (data.channel_id != channel) return;
 
             if (await filter.call(null, data)) {
                 this.collections.push(data);

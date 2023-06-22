@@ -3,9 +3,11 @@
  *   All rights reserved.
  *   This repository is licensed under the [Commons Clause License](https://commonsclause.com/). Monetized use of this repository is strictly disallowed.
  */
-export default (index, name, number) => {
-    const srtNumber = number.toString();
-    const trimedNumber = (srtNumber.includes(".") ? `${srtNumber.split(".")[0]}.${srtNumber.split(".")[1].slice(0, 2)}` : srtNumber)
+export const formatScoreString = (index, name, number) => `**#${index+1}** ${name}, **${number}**`
 
-    return `**#${index+1}** ${name}, **${trimedNumber.split(".")[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",")}${srtNumber.includes(".")?".":""}${trimedNumber.split(".")[1]??""}**`;
+export const formatChannelString = (array, mode) => {
+    return (array.map((item, index)=> {
+        const number = mode.fromDecimal(item.number)
+        return formatScoreString(index, item.name, isNaN(number) ? number : Number(number).toLocaleString())
+    })).join("\n")
 }

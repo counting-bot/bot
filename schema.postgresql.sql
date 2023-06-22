@@ -90,7 +90,7 @@ CREATE TABLE public.countinglog (
     reason character varying,
     number numeric,
     date timestamp without time zone,
-    jumpurl character varying
+    messageid character varying
 );
 
 
@@ -151,18 +151,6 @@ CREATE TABLE public.failtexts (
 ALTER TABLE public.failtexts OWNER TO countingbot;
 
 --
--- Name: links; Type: TABLE; Schema: public; Owner: countingbot
---
-
-CREATE TABLE public.links (
-    name character varying,
-    value character varying
-);
-
-
-ALTER TABLE public.links OWNER TO countingbot;
-
---
 -- Name: mothlychannellb; Type: TABLE; Schema: public; Owner: countingbot
 --
 
@@ -186,7 +174,7 @@ ALTER TABLE public.mothlychannellb OWNER TO countingbot;
 CREATE TABLE public.serverdata (
     serverid character varying NOT NULL,
     name character varying,
-    iconurl character varying
+    icon character varying
 );
 
 
@@ -223,6 +211,7 @@ ALTER TABLE ONLY public.channellb
 ALTER TABLE ONLY public.channelsettings
     ADD CONSTRAINT channelsettings_pkey PRIMARY KEY (channelid);
 
+
 --
 -- Name: failtexts failtexts_pkey; Type: CONSTRAINT; Schema: public; Owner: countingbot
 --
@@ -246,18 +235,13 @@ ALTER TABLE ONLY public.mothlychannellb
 ALTER TABLE ONLY public.serverdata
     ADD CONSTRAINT serverdata_pkey PRIMARY KEY (serverid);
 
+
 --
 -- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: countingbot
 --
 
 ALTER TABLE ONLY public.users
     ADD CONSTRAINT users_pkey PRIMARY KEY (userid);
-
---
--- Name: IDX_session_expire; Type: INDEX; Schema: public; Owner: countingbot
---
-
-CREATE INDEX "IDX_session_expire" ON public.session USING btree (expire);
 
 
 --

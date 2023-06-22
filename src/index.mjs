@@ -3,66 +3,70 @@
  *   All rights reserved.
  *   This repository is licensed under the [Commons Clause License](https://commonsclause.com/). Monetized use of this repository is strictly disallowed.
  */
-import {Client} from 'oceanic.js'
-import { readdir } from 'fs/promises'
-import { schedule } from 'node-cron';
+import { Client } from 'oceanic.js';
+import redisCache from './utils/redisCache.mjs';
 import packet from './events/packet.mjs';
-import { token } from '/static/settings.mjs';
+
+import { Redis } from 'ioredis';
+import { schedule } from 'node-cron';
 import pgPool from './utils/db.mjs'
 
+import commandList from './slashCommands/commandList.mjs';
+
+const { token, clientID } = await import(process.env.NODE_ENV === "production" ? '/static/settings.mjs' : './static/settings.mjs');
+
 const client = new Client({
-	auth: token,
-	collectionLimits: {
-		messages: 3
-	},
-	gateway:{
-		intents: [
-			"GUILDS",
-			"GUILD_MESSAGES",
-			"MESSAGE_CONTENT"
-		]
-	}
-});
-
-client.once("ready", async() => {
-	const discordCommands = await client.application.getGlobalCommands()
-	client.commands = new Map(
-		await Promise.all((await readdir("./slashCommands/")).map(async registerdCommand => {
-			const name = registerdCommand.split(".")[0]
-			if (discordCommands.length === 0){
-				return [name, {commandFile: await import(`./slashCommands/${registerdCommand}`)}]
-			}else{
-				return [name, {commandFile: await import(`./slashCommands/${registerdCommand}`), discordInfo: discordCommands.find(command=>{return command.name === name})}]
-			}
-		}))
-	)
-
-	if (discordCommands.length === 0) {
-		const localCommands = Array.from(client.commands.keys()).map(name => {
-			const {options, description} = client.commands.get(name).commandFile
-			return {name, options, description}
-		})
-
-		const remoteCommands = await client.application.bulkEditGlobalCommands(localCommands)
-		Array.from(client.commands.keys()).map(cmd=>{
-			client.commands.set(cmd, {...client.commands.get(cmd), discordInfo: remoteCommands.find(command=>{return command.name === cmd})})
-		})
-	}
+    auth: token,
+    collectionLimits: {
+        messages: 0,
+        members: 0,
+        users: 0
+    },
+    gateway:{
+        intents: [
+            "GUILDS",
+            "GUILD_MESSAGES",
+            "MESSAGE_CONTENT"
+        ],
+        presence:{
+            status: "idle",
+            activities: [{
+                name: "Booting up",
+                type: 0,
+            }]
+        }
+    }
 })
 
-client.on("ready", async() => {
-	client.editStatus("dnd", [{ name: "/help", type: 0}]);
+client.redis = new Redis(6379, process.env.NODE_ENV === "production" ? "cache" : "192.168.0.21");
+
+client.counterCache = new redisCache({redis: client.redis, prefix: "counterCache"})
+client.guildCache = new redisCache({redis: client.redis, prefix: "guildCache"})
+client.channelCache = new redisCache({redis: client.redis, prefix: "channelCache"})
+
+client.on("ready", async()=>{
+    if (!client.commands) {
+        let discordCommands = await client.rest.applicationCommands.getGlobalCommands(clientID);
+        if (discordCommands.length === 0) {
+            remoteCommands = await client.rest.applicationCommands.bulkEditGlobalCommands(clientID, commandList)
+        }
+
+        client.commands = new Map(
+            commandList.map(command => {
+                return [command.name, {commandFile: command, discordInfo: discordCommands.find(discordCommand=>{return discordCommand.name === command.name})}]
+            })
+        )
+    }
+
+    client.editStatus("dnd", [{ name: "/help", type: 0}]);
 })
 
-
-client.on('log', m => console.log(m));
-client.on('error', m => console.error(m));
-client.on('warn', m => console.warn(m));
-
+client.on("error", error => console.log(error))
 client.on("packet", packet.bind(null, client))
+client.connect()
 
+// monthly
 schedule('0 0 1 * *', async () => {
-	pgPool`DELETE FROM mothlychannellb`.catch(err=>{});
+    // reset  mothly channel lb
+    pgPool`DELETE FROM mothlychannellb`.catch(err=>{});
 })
-
-client.connect();

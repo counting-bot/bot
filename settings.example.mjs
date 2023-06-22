@@ -5,3 +5,4 @@
  */
 export const token = "Bot TOKEN_HERE"
 export const ownerID = '726515812361437285'
+export const clientID = '726515812361437285'
