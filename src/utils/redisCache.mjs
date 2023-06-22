@@ -21,7 +21,7 @@ export default class redisCache{
     }
 
     set(key, value, expiry){
-        if (expiry) this.#redis.set(`${this.#prefix}:${key}`, typeof value === "object" ? JSON.stringify(value) : value, expiry ? "EX" : undefined, expiry)
+        if (expiry) this.#redis.set(`${this.#prefix}:${key}`, typeof value === "object" ? JSON.stringify(value) : value, "EX", expiry)
         else this.#redis.set(`${this.#prefix}:${key}`, typeof value === "object" ? JSON.stringify(value) : value)
     }
     

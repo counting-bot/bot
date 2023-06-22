@@ -50,14 +50,15 @@ export default {
             ]
         }
 
-        Array.from(sharder.commands.keys()).map(command=>{
-            if (command === "admin") return;
-            const cmd = sharder.commands.get(command)
-            const catagoryIndex = help.embeds[0].fields.findIndex(element => element.name === cmd.commandFile.category);
-    
-            if (catagoryIndex === -1) help.embeds[0].fields.push({ "name": cmd.commandFile.category, "value": `</${command}:${cmd.discordInfo.id}>`, "inline": true })
-            else help.embeds[0].fields[catagoryIndex].value+=`\n</${command}:${cmd.discordInfo.id}>`;  
-        })
+        for (let commandName of Array.from(sharder.commands.keys())) {
+            if (commandName !== "admin") {
+                const cmd = sharder.commands.get(commandName)
+                const catagoryIndex = help.embeds[0].fields.findIndex(element => element.name === cmd.commandFile.category);
+        
+                if (catagoryIndex === -1) help.embeds[0].fields.push({ "name": cmd.commandFile.category, "value": `</${commandName}:${cmd.discordInfo.id}>`, "inline": true })
+                else help.embeds[0].fields[catagoryIndex].value+=`\n</${commandName}:${cmd.discordInfo.id}>`;
+            }
+        }
 
         const filter = ((body) => {
             if (body.member.user.id !== interaction.member.user.id){
