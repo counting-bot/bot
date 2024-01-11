@@ -1,4 +1,4 @@
-FROM node:19.8.1-alpine3.16
+FROM node:20.2-alpine3.16
 ENV NODE_ENV production
 
 WORKDIR /app
